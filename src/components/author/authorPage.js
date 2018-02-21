@@ -4,21 +4,16 @@ var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
 var AuthorList = require('./authorList');
+var AuthorActions = require('../../actions/authorActions');
+var AuthorStore = require('../../stores/authorStore');
 var AuthorApi = require('../../api/authorApi');
 
 var Authors = React.createClass(
     {
         getInitialState: function(){
             return {
-                 authors: []
+                 authors: AuthorStore.getAllAuthors()
             };
-        },
-
-        componentDidMount: function(){
-
-            if(this.isMounted()){
-                this.setState({authors: AuthorApi.getAllAuthors()}); 
-            }
         },
 
         render: function(){

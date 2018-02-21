@@ -1,9 +1,10 @@
-"use strict"
+"use strict";
 
 var React = require('react');
 var Router = require('react-router');
-var AuhorForm = require('./authorForm');
-var AuthorApi = require('../../api/authorApi');
+var AuthorForm = require('./authorForm');
+var AuthorActions = require('../../actions/authorActions');
+var AuthorStore = require('../../stores/authorStore');
 var toastr = require('toastr');
 
 var manageAuthorPage = React.createClass({
@@ -13,13 +14,13 @@ var manageAuthorPage = React.createClass({
 
     statics: {
         willTransitionFrom: function(transition, component){
-            if(component.state.dirty && !comfirm("Leave without saving?")){
+            if(component.state.dirty && !confirm("Leave without saving?")){
                 transition.abort();
             }
         }
     },
     getInitialState: function(){
-        return({
+        return ({
             author: {id: '', firstName: '', lstName: ''},
             errors: {},
             dirty: false
@@ -28,11 +29,11 @@ var manageAuthorPage = React.createClass({
     },
 
     setAuthorState: function(event){
-        this.setState({dirty:true});
+        this.setState({dirty: true});
         var field = event.target.name;
         var value = event.target.value;
         this.state.author[field] = value;
-        return this.setState({author: this.state.author})
+        return this.setState({author: this.state.author});
     },
 
     authorFormIsValid: function(){
@@ -59,25 +60,25 @@ var manageAuthorPage = React.createClass({
         if(!this.authorFormIsValid()){
             return;
         }
-        AuthorApi.saveAuthor(this.state.author);
+        AuthorActions.createAuthor(this.state.author);
         toastr.success('Author saved.');
         this.transitionTo('authors');
-        this.setState({dirty:false});
+        this.setState({dirty: false});
     },
 
     componentWillMount: function(){
         var authorId = this.props.params.id;
 
         if(authorId){
-            this.setState({author: AuthorApi.getAuthorById(authorId)});
+            this.setState({author: AuthorStore.getAuthorById(authorId)});
         }
     },
 
     render: function(){
-        return(
-            <AuhorForm author= {this.state.author} onChange={this.setAuthorState} onSave = {this.saveAuthor} errors={this.state.errors}/>
+        return (
+            <AuthorForm author= {this.state.author} onChange={this.setAuthorState} onSave = {this.saveAuthor} errors={this.state.errors}/>
         );
     }
-})
+});
 
 module.exports = manageAuthorPage;
